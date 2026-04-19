@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Car Booking</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(to right,#0f172a,#1e293b);
+  color:white;
+}
+
+.container{
+  display:flex;
+  height:100vh;
+}
+
+/* LEFT SIDE */
+.left{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+.left img{
+  width:350px;
+  border-radius:12px;
+}
+
+.left h2{
+  margin-top:20px;
+}
+
+.left p{
+  color:#cbd5f5;
+}
+
+/* RIGHT SIDE */
+.right{
+  flex:1;
+  background:white;
+  color:black;
+  padding:40px;
+  border-radius:20px 0 0 20px;
+  overflow-y:auto;
+}
+
+input, select{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  background:#0f172a;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.summary{
+  margin-top:20px;
+  background:#f1f5f9;
+  padding:15px;
+  border-radius:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- LEFT -->
+  <div class="left">
+    <img id="carImage" src="images/innova.jpg">
+    <h2 id="carName">Toyota Innova</h2>
+    <p id="carPrice">₹2500/day</p>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <h2>Car Rental Booking</h2>
+
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="phone" placeholder="Phone">
+    <input type="email" id="email" placeholder="Email">
+
+    <select id="carSelect" onchange="updateCar()"></select>
+
+    <input type="date" id="start" onchange="updateSummary()">
+    <input type="date" id="end" onchange="updateSummary()">
+
+    <button onclick="bookCar()">Book Now</button>
+
+    <div class="summary" id="summary">
+      Select dates to see price
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+// 🚗 CAR DATA
+const cars = [
+ {id:101, model:"Toyota Innova", price:2500, img:"images/innova.jpg"},
+ {id:102, model:"Hyundai Creta", price:2200, img:"images/hyundaiCreta.jpg"},
+ {id:103, model:"Maruti Swift", price:1200, img:"images/marutiSwift.jpg"},
+ {id:104, model:"Honda City", price:2000, img:"images/HondaCity.jpg"},
+ {id:105, model:"Kia Seltos", price:2400, img:"images/KiaSeltos.jpg"},
+ {id:106, model:"Tata Nexon", price:2100, img:"images/TataNexon.jpg"},
+ {id:107, model:"Mahindra Thar", price:3000, img:"images/MahindraThar.jpg"},
+ {id:108, model:"Hyundai i20", price:1300, img:"images/HyundaiI20.jpg"},
+ {id:109, model:"Skoda Slavia", price:2300, img:"images/SkodaSlavia.jpg"},
+ {id:110, model:"MG Hector", price:2800, img:"images/MGhector.jpg"},
+ {id:111, model:"Toyota Fortuner", price:4000, img:"images/ToyotaFortuner.jpg"},
+ {id:112, model:"Mahindra XUV700", price:3500, img:"images/MahindraXUV700.jpg"}
+];
+
+// populate dropdown
+let carSelect = document.getElementById("carSelect");
+cars.forEach(c=>{
+  carSelect.innerHTML += `<option value="${c.id}">${c.model} (₹${c.price}/day)</option>`;
+});
+
+// update left side car
+function updateCar(){
+  let selected = cars.find(c=>c.id == carSelect.value);
+  document.getElementById("carImage").src = selected.img;
+  document.getElementById("carName").innerText = selected.model;
+  document.getElementById("carPrice").innerText = "₹"+selected.price+"/day";
+  updateSummary();
+}
+
+// calculate days
+function calculateDays(start, end){
+  let s = new Date(start);
+  let e = new Date(end);
+
+  s.setHours(0,0,0,0);
+  e.setHours(0,0,0,0);
+
+  let diff = e - s;
+  let days = Math.round(diff / (1000*60*60*24));
+
+  if(days <= 0) days = 1;
+
+  return days;
+}
+
+// update summary
+function updateSummary(){
+  let start = document.getElementById("start").value;
+  let end = document.getElementById("end").value;
+
+  if(!start || !end){
+    document.getElementById("summary").innerText = "Select dates to see price";
+    return;
+  }
+
+  let car = cars.find(c=>c.id == carSelect.value);
+  let days = calculateDays(start, end);
+  let total = days * car.price;
+
+  document.getElementById("summary").innerHTML = `
+    <b>Days:</b> ${days} <br>
+    <b>Price/Day:</b> ₹${car.price} <br>
+    <b>Total:</b> ₹${total}
+  `;
+}
+
+// booking API
+function bookCar(){
+
+  let name = document.getElementById("name").value;
+  let phone = document.getElementById("phone").value;
+  let email = document.getElementById("email").value;
+  let car_id = carSelect.value;
+  let start = document.getElementById("start").value;
+  let end = document.getElementById("end").value;
+
+  // validation
+  if(!name || !phone || !email || !start || !end){
+    alert("Please fill all details");
+    return;
+  }
+
+  fetch("http://localhost:3000/book", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ name, phone, email, car_id, start, end })
+  })
+  .then(res=>res.text())
+  .then(data=>{
+    alert(data);
+  });
+}
+
+// auto select car from previous page
+let selectedCar = localStorage.getItem("selectedCar");
+if(selectedCar){
+  let car = cars.find(c=>c.model === selectedCar);
+  if(car){
+    carSelect.value = car.id;
+    updateCar();
+  }
+}
+
+// init
+updateCar();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Available Cars</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+}
+
+/* HEADER */
+h2{
+  text-align:center;
+  padding:25px;
+  font-size:32px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:25px;
+  padding:30px;
+}
+
+/* CARD */
+.card{
+  backdrop-filter: blur(15px);
+  background:rgba(255,255,255,0.05);
+  border-radius:20px;
+  padding:15px;
+  text-align:center;
+  transition:0.4s ease;
+  border:1px solid rgba(255,255,255,0.1);
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* HOVER EFFECT */
+.card:hover{
+  transform:translateY(-10px) scale(1.03);
+  box-shadow:0 20px 40px rgba(0,0,0,0.8);
+}
+
+/* IMAGE */
+.card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:15px;
+  transition:0.4s;
+}
+
+.card:hover img{
+  transform:scale(1.05);
+}
+
+/* TEXT */
+.card h3{
+  margin-top:10px;
+  font-weight:600;
+}
+
+.card p{
+  color:#60a5fa;
+  margin:8px 0;
+  font-size:18px;
+}
+
+/* BUTTON */
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(45deg,#3b82f6,#2563eb);
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:linear-gradient(45deg,#2563eb,#1d4ed8);
+  transform:scale(1.05);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>🚗 Available Cars</h2>
+
+<div class="grid" id="carList"></div>
+
+<script>
+
+let container = document.getElementById("carList");
+
+// image map
+function getImage(model){
+  const map = {
+    "Toyota Innova":"innova.jpg",
+    "Hyundai Creta":"hyundaiCreta.jpg",
+    "Maruti Swift":"marutiSwift.jpg",
+    "Honda City":"HondaCity.jpg",
+    "Kia Seltos":"KiaSeltos.jpg",
+    "Tata Nexon":"TataNexon.jpg",
+    "Mahindra Thar":"MahindraThar.jpg",
+    "Hyundai i20":"HyundaiI20.jpg",
+    "Skoda Slavia":"SkodaSlavia.jpg",
+    "MG Hector":"MGhector.jpg",
+    "Toyota Fortuner":"ToyotaFortuner.jpg",
+    "Mahindra XUV700":"MahindraXUV700.jpg"
+  };
+  return map[model] || "innova.jpg";
+}
+
+// fetch cars
+fetch("http://localhost:3000/cars")
+.then(res => res.json())
+.then(data => {
+
+  container.innerHTML = "";
+
+  data.forEach(c => {
+
+    let imgName = getImage(c.model);
+
+    container.innerHTML += `
+      <div class="card">
+        <img src="images/${imgName}">
+        <h3>${c.model}</h3>
+        <p>₹${c.price_per_day}/day</p>
+        <button onclick="goBook(${c.car_id})">Book Now</button>
+      </div>
+    `;
+  });
+
+});
+
+// redirect
+function goBook(id){
+  localStorage.setItem("selectedCarId", id);
+  window.location.href = "booking.html";
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Car Rental</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  background:#020617;
+  color:white;
+}
+
+/* 🔥 floating background */
+.circle{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(59,130,246,0.2);
+  animation:float 10s infinite;
+}
+
+.circle:nth-child(1){
+  width:200px;
+  height:200px;
+  top:10%;
+  left:10%;
+}
+
+.circle:nth-child(2){
+  width:300px;
+  height:300px;
+  bottom:10%;
+  right:10%;
+}
+
+@keyframes float{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(-30px);}
+  100%{transform:translateY(0);}
+}
+
+/* 🔥 main card */
+.container{
+  text-align:center;
+  padding:50px;
+  border-radius:20px;
+  backdrop-filter:blur(15px);
+  background:rgba(255,255,255,0.05);
+  box-shadow:0 10px 40px rgba(0,0,0,0.6);
+  animation:fadeIn 1.5s ease;
+}
+
+h1{
+  font-size:42px;
+  margin-bottom:10px;
+}
+
+/* typing text */
+#tagline{
+  font-size:18px;
+  color:#94a3b8;
+  height:25px;
+  margin-bottom:30px;
+}
+
+/* buttons */
+.btn{
+  padding:12px 20px;
+  margin:10px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.view{
+  background:#3b82f6;
+  color:white;
+}
+
+.book{
+  background:#22c55e;
+  color:white;
+}
+
+.btn:hover{
+  transform:scale(1.1);
+  box-shadow:0 5px 20px rgba(0,0,0,0.5);
+}
+
+/* animation */
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(30px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* 🚗 ROAD */
+.road{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:80px;
+  background:#111;
+  border-top:3px dashed #fff;
+}
+
+/* 🚗 CAR */
+.car{
+  position:absolute;
+  bottom:25px;
+  left:-100px;
+  font-size:40px;
+  animation:drive 6s linear infinite;
+  text-shadow:0 0 10px #3b82f6;
+}
+
+/* 🚗 CAR ANIMATION */
+@keyframes drive{
+  0%{ left:-100px; }
+  100%{ left:100%; }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- 🔥 background circles -->
+<div class="circle"></div>
+<div class="circle"></div>
+
+<div class="container">
+
+  <h1>🚗 Car Rental System</h1>
+
+  <p id="tagline"></p>
+
+  <button class="btn view" onclick="goCars()">View Cars</button>
+  <button class="btn book" onclick="goBooking()">Book Now</button>
+  <button class="btn view" onclick="goHistory()">History</button>
+
+</div>
+
+<!-- 🚗 road + car -->
+<div class="road"></div>
+<div class="car">🚗</div>
+
+<script>
+
+// 🔥 typing animation
+let text = "Your journey starts with the perfect ride";
+let i = 0;
+
+function type(){
+  if(i < text.length){
+    document.getElementById("tagline").innerHTML += text.charAt(i);
+    i++;
+    setTimeout(type, 40);
+  }
+}
+
+type();
+
+// navigation
+function goCars(){
+  window.location.href = "cars.html";
+}
+
+function goBooking(){
+  window.location.href = "booking.html";
+}
+
+function goHistory(){
+  window.location.href = "history.html";
+}
+
+</script>
+
+</body>
+</html>
